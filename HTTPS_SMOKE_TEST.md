@@ -12,6 +12,7 @@ Expect 200 JSON: {"success":true,"message":"OK"}
 
 2) CORS allows exact HTTPS origin
 - Ensure backend CORS_ALLOWED_ORIGINS includes `https://localhost:3000` (and/or `https://127.0.0.1:3000`) when not in dev-allow-all.
+- Do NOT include `http://` origins if your frontend is served via `https://`; keep list strict (no wildcard).
 - Backend logs "CORS allowed origins:" on startup.
 
 3) Preflight OPTIONS /auth/signup (HTTPS)
