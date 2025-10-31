@@ -3,15 +3,17 @@ import * as storage from '../utils/storage';
 
 // Determine base URL:
 // 1) Use explicit env var if provided.
-// 2) If not provided, and running in browser, default to localhost:3010 or 127.0.0.1:3010 based on current hostname.
+// 2) If not provided, and running in browser, default to http://localhost:3010 to avoid mixed-host CORS issues.
 const envBase = process.env.REACT_APP_API_BASE_URL;
 let resolvedBaseURL = envBase && envBase.trim() ? envBase.trim() : '';
 
 if (!resolvedBaseURL && typeof window !== 'undefined' && window?.location) {
-  const { protocol, hostname } = window.location;
+  // Always default explicitly to http://localhost:3010 (not window.protocol)
+  // to avoid https->http mixed content surprises when hosted in dev proxies.
+  const defaultProtocol = 'http:';
+  const defaultHost = 'localhost';
   const defaultPort = 3010;
-  const host = (hostname === '127.0.0.1' || hostname === 'localhost') ? hostname : 'localhost';
-  resolvedBaseURL = `${protocol}//${host}:${defaultPort}`;
+  resolvedBaseURL = `${defaultProtocol}//${defaultHost}:${defaultPort}`;
 }
 
 // Development-time diagnostic log to help identify baseURL issues
@@ -39,6 +41,17 @@ api.interceptors.request.use((config) => {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Extra diagnostics: log full URL for auth endpoints
+  try {
+    const base = config.baseURL || resolvedBaseURL || '';
+    const fullUrl = base ? new URL(config.url, base).toString() : config.url;
+    if (config?.url?.startsWith('/auth/')) {
+      // eslint-disable-next-line no-console
+      console.log('[API] Request URL:', fullUrl);
+    }
+  } catch {
+    // ignore URL construction issues
+  }
   return config;
 });
 
@@ -51,9 +64,14 @@ api.interceptors.response.use(
       const isCORSNetworkErr =
         String(err?.message || '').toLowerCase().includes('network error') ||
         (err?.code === 'ERR_NETWORK' && !err?.response);
+      const details = {
+        message: err?.message,
+        code: err?.code,
+        name: err?.name,
+      };
       const hint = isCORSNetworkErr
-        ? 'Network error. Check backend URL, server running on port 3010, and CORS settings.'
-        : 'Network error. Unable to reach the server.';
+        ? `Network error. Check backend URL (${resolvedBaseURL}), server running on port 3010, and CORS settings. Details: ${JSON.stringify(details)}`
+        : `Network error. Unable to reach the server. Details: ${JSON.stringify(details)}`;
       return Promise.reject(new Error(hint));
     }
     const status = err?.response?.status;

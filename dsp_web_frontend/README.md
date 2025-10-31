@@ -27,6 +27,16 @@ Launches the test runner in interactive watch mode.
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
+## Backend API URL
+
+Set `REACT_APP_API_BASE_URL` in a `.env` file (see `.env.example`) to point to your backend, e.g.:
+```
+REACT_APP_API_BASE_URL=http://localhost:3010
+```
+
+Troubleshooting:
+- If your frontend is served via https (e.g., tunnels/proxies), ensure the backend is reachable and CORS allows that origin. Mixed content (https page calling http backend) can be blocked; our client defaults to `http://localhost:3010`. Override with `REACT_APP_API_BASE_URL` if needed.
+
 ## Customization
 
 ### Colors

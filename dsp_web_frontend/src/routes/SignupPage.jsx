@@ -31,12 +31,20 @@ export default function SignupPage() {
       setError('Password must be at least 6 characters.');
       return;
     }
-    const res = await signup(name.trim(), email, password);
-    if (res.ok) {
-      // Requirement: On signup success, redirect to /login
-      navigate('/login');
-    } else {
-      setError(res.error);
+    try {
+      const res = await signup(name.trim(), email, password);
+      if (res.ok) {
+        // Requirement: On signup success, redirect to /login
+        navigate('/login');
+      } else {
+        setError(res.error);
+        // eslint-disable-next-line no-console
+        console.warn('[Signup] Backend responded with error:', res.error);
+      }
+    } catch (err) {
+      setError(err.message || 'Signup failed');
+      // eslint-disable-next-line no-console
+      console.error('[Signup] Network/axios error:', err);
     }
   };
 

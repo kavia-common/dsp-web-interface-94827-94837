@@ -5,6 +5,7 @@ import api from './apiClient';
  * - POST /auth/signup with body { name, email, password }
  * - POST /auth/login with body { email, password }
  * Returns shape: { success: boolean, token?: string, data?: object, message?: string }
+ * Diagnostics: apiClient logs [API] Request URL for /auth/* endpoints.
  */
 
 /**
