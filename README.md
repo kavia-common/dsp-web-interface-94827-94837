@@ -13,6 +13,7 @@ An example `.env.example` is provided at `dsp_web_frontend/.env.example`.
 The backend requires a `JWT_SECRET` in its environment to sign tokens. Create a `.env` in `dsp-auth-backend/` and set:
 - `JWT_SECRET=some_dev_secret`
 - Optionally set `SQLITE_DB_PATH` (defaults to `data/app.db`)
+- Optionally set `CORS_ALLOWED_ORIGINS` to a comma-separated list (e.g. `http://localhost:3000,http://127.0.0.1:3000`). In development, you may set `*` to allow all origins temporarily.
 
 If you see a "Network error" during signup or login, verify:
 - Backend server is running on the expected port (default 3010)
