@@ -13,8 +13,8 @@ if (!resolvedBaseURL && typeof window !== 'undefined' && window?.location) {
   const isPageHttps = window.location.protocol === 'https:';
   const defaultProtocol = isPageHttps ? 'https:' : 'http:';
   const defaultHost = 'localhost';
-  // Use 3011 for HTTPS backend, 3010 for HTTP backend by convention in this project.
-  const defaultPort = isPageHttps ? 3011 : 3010;
+  // Use 3443 for HTTPS backend, 3010 for HTTP backend by convention in this project.
+  const defaultPort = isPageHttps ? 3443 : 3010;
   resolvedBaseURL = `${defaultProtocol}//${defaultHost}:${defaultPort}`;
 }
 
