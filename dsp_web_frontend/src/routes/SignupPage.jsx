@@ -10,6 +10,7 @@ export default function SignupPage() {
   const { signup, loading } = useAuth();
   const navigate = useNavigate();
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -18,6 +19,10 @@ export default function SignupPage() {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!name.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
     if (!isValidEmail(email)) {
       setError('Please enter a valid email.');
       return;
@@ -26,8 +31,9 @@ export default function SignupPage() {
       setError('Password must be at least 6 characters.');
       return;
     }
-    const res = await signup(email, password);
+    const res = await signup(name.trim(), email, password);
     if (res.ok) {
+      // Requirement: On signup success, redirect to /login
       navigate('/login');
     } else {
       setError(res.error);
@@ -41,13 +47,22 @@ export default function SignupPage() {
       <form onSubmit={submit} style={{ display: 'grid', gap: 12 }}>
         <ErrorBanner message={error} />
         <label>
+          <div className="visually-hidden">Name</div>
+          <Input
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+          />
+        </label>
+        <label>
           <div className="visually-hidden">Email</div>
           <Input
             type="email"
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            autoFocus
           />
         </label>
         <label>

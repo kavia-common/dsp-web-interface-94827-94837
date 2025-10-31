@@ -26,7 +26,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    const msg = err?.response?.data?.message || err.message || 'Request failed';
+    const backend = err?.response?.data;
+    // Prefer backend "message", fall back to typical error message
+    const msg = (backend && (backend.message || backend.error)) || err.message || 'Request failed';
     return Promise.reject(new Error(msg));
   }
 );

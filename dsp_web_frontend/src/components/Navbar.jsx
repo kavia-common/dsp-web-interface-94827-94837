@@ -14,6 +14,7 @@ export default function Navbar() {
   const appName = process.env.REACT_APP_APP_NAME || 'DSP Web UI';
 
   const handleLogout = () => {
+    // Clear auth state and go to login
     logout();
     navigate('/login');
   };

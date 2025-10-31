@@ -1,10 +1,11 @@
 import api from './apiClient';
 
-// TODO: Confirm final backend endpoints and response shapes.
-// Assumptions below:
-// POST /auth/login { email, password } -> { token, user }
-// POST /auth/signup { email, password } -> { token?, user? }
-// POST /auth/logout -> 204
+/**
+ * Expected backend interface:
+ * - POST /auth/signup with body { name, email, password }
+ * - POST /auth/login with body { email, password }
+ * Returns shape: { success: boolean, token?: string, data?: object, message?: string }
+ */
 
 /**
  * PUBLIC_INTERFACE
@@ -12,16 +13,27 @@ import api from './apiClient';
  */
 export async function login(email, password) {
   const { data } = await api.post('/auth/login', { email, password });
-  return data;
+  // Normalize to always return { success, token, data, message }
+  return {
+    success: !!data?.success,
+    token: data?.token,
+    data: data?.data,
+    message: data?.message,
+  };
 }
 
 /**
  * PUBLIC_INTERFACE
  * signup registers a new user account.
  */
-export async function signup(email, password) {
-  const { data } = await api.post('/auth/signup', { email, password });
-  return data;
+export async function signup(name, email, password) {
+  const { data } = await api.post('/auth/signup', { name, email, password });
+  return {
+    success: !!data?.success,
+    token: data?.token,
+    data: data?.data,
+    message: data?.message,
+  };
 }
 
 /**

@@ -41,10 +41,13 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await authService.login(email, password);
-      // TODO: Confirm response shape: expecting { token, user }
-      setToken(res.token);
-      setUser(res.user || { email });
-      return { ok: true };
+      if (res.success) {
+        if (res.token) setToken(res.token);
+        // backend optional data may include user profile. Fallback to email only.
+        setUser(res.data?.user || res.data || { email });
+        return { ok: true };
+      }
+      return { ok: false, error: res.message || 'Login failed' };
     } catch (err) {
       return { ok: false, error: err.message || 'Login failed' };
     } finally {
@@ -53,16 +56,19 @@ export function AuthProvider({ children }) {
   };
 
   // PUBLIC_INTERFACE
-  const signup = async (email, password) => {
+  const signup = async (name, email, password) => {
     setLoading(true);
     try {
-      const res = await authService.signup(email, password);
-      // Optionally auto-login on signup if API returns token
-      if (res.token) {
-        setToken(res.token);
-        setUser(res.user || { email });
+      const res = await authService.signup(name, email, password);
+      if (res.success) {
+        // Do not auto-login unless token returned; caller decides redirect to /login
+        if (res.token) {
+          setToken(res.token);
+          setUser(res.data?.user || res.data || { email, name });
+        }
+        return { ok: true };
       }
-      return { ok: true };
+      return { ok: false, error: res.message || 'Signup failed' };
     } catch (err) {
       return { ok: false, error: err.message || 'Signup failed' };
     } finally {
