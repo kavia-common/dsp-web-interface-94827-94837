@@ -69,9 +69,11 @@ api.interceptors.response.use(
         code: err?.code,
         name: err?.name,
       };
+      const httpsHint = (typeof window !== 'undefined' && window.location?.protocol === 'https:') ?
+        ' Note: Your page is loaded over HTTPS. Calls to an HTTP backend may be blocked (Mixed Content). Use an HTTPS backend URL or load the frontend over HTTP for local dev.' : '';
       const hint = isCORSNetworkErr
-        ? `Network error. Check backend URL (${resolvedBaseURL}), server running on port 3010, and CORS settings. Details: ${JSON.stringify(details)}`
-        : `Network error. Unable to reach the server. Details: ${JSON.stringify(details)}`;
+        ? `Network error. Check backend URL (${resolvedBaseURL}), that the server is running on port 3010, and that CORS/preflight allows your origin.${httpsHint} Details: ${JSON.stringify(details)}`
+        : `Network error. Unable to reach the server.${httpsHint} Details: ${JSON.stringify(details)}`;
       return Promise.reject(new Error(hint));
     }
     const status = err?.response?.status;
