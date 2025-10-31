@@ -3,16 +3,21 @@ import * as storage from '../utils/storage';
 
 // Determine base URL:
 // 1) Use explicit env var if provided.
-// 2) If not provided, and running in browser, default to same-origin root.
+// 2) If not provided, and running in browser, default to localhost:3010 or 127.0.0.1:3010 based on current hostname.
 const envBase = process.env.REACT_APP_API_BASE_URL;
 let resolvedBaseURL = envBase && envBase.trim() ? envBase.trim() : '';
 
 if (!resolvedBaseURL && typeof window !== 'undefined' && window?.location) {
   const { protocol, hostname } = window.location;
-  // Common local backend port default is 3010 as per backend config.
-  // If the frontend is on 3000 and backend on 3010, default to 3010.
   const defaultPort = 3010;
-  resolvedBaseURL = `${protocol}//${hostname}:${defaultPort}`;
+  const host = (hostname === '127.0.0.1' || hostname === 'localhost') ? hostname : 'localhost';
+  resolvedBaseURL = `${protocol}//${host}:${defaultPort}`;
+}
+
+// Development-time diagnostic log to help identify baseURL issues
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line no-console
+  console.log('[API] Base URL resolved to:', resolvedBaseURL || '(empty)');
 }
 
 /**
@@ -43,9 +48,11 @@ api.interceptors.response.use(
   (err) => {
     // Network error (no response)
     if (err?.request && !err?.response) {
-      const isCORS = String(err?.message || '').toLowerCase().includes('network error');
-      const hint = isCORS
-        ? 'Network error. Check backend URL, server running, and CORS settings.'
+      const isCORSNetworkErr =
+        String(err?.message || '').toLowerCase().includes('network error') ||
+        (err?.code === 'ERR_NETWORK' && !err?.response);
+      const hint = isCORSNetworkErr
+        ? 'Network error. Check backend URL, server running on port 3010, and CORS settings.'
         : 'Network error. Unable to reach the server.';
       return Promise.reject(new Error(hint));
     }
