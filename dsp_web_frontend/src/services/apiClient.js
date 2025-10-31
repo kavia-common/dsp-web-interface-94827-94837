@@ -8,11 +8,13 @@ const envBase = process.env.REACT_APP_API_BASE_URL;
 let resolvedBaseURL = envBase && envBase.trim() ? envBase.trim() : '';
 
 if (!resolvedBaseURL && typeof window !== 'undefined' && window?.location) {
-  // Always default explicitly to http://localhost:3010 (not window.protocol)
-  // to avoid https->http mixed content surprises when hosted in dev proxies.
-  const defaultProtocol = 'http:';
+  // Prefer HTTPS backend when the page is loaded over HTTPS to avoid mixed-content blocks.
+  // Otherwise default to HTTP.
+  const isPageHttps = window.location.protocol === 'https:';
+  const defaultProtocol = isPageHttps ? 'https:' : 'http:';
   const defaultHost = 'localhost';
-  const defaultPort = 3010;
+  // Use 3011 for HTTPS backend, 3010 for HTTP backend by convention in this project.
+  const defaultPort = isPageHttps ? 3011 : 3010;
   resolvedBaseURL = `${defaultProtocol}//${defaultHost}:${defaultPort}`;
 }
 
