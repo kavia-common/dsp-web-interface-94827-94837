@@ -5,7 +5,7 @@
 The frontend uses an Axios client configured via the environment variable `REACT_APP_API_BASE_URL`. For local development, ensure your backend is running (default port 3010) and set:
 
 - Create a `.env` file in `dsp_web_frontend/` (same folder as package.json)
-- Add `REACT_APP_API_BASE_URL=http://localhost:3010`
+- Add `REACT_APP_API_BASE_URL=http://localhost:3011`
 - Restart `npm start` after changes to `.env`
 
 An example `.env.example` is provided at `dsp_web_frontend/.env.example`.

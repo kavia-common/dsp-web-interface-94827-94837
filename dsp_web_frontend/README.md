@@ -33,7 +33,7 @@ Set `REACT_APP_API_BASE_URL` in a `.env` file (see `.env.example`) to point to y
 Examples:
 ```
 # HTTP backend (default port 3010) - only if your frontend is also served over HTTP
-REACT_APP_API_BASE_URL=http://localhost:3010
+REACT_APP_API_BASE_URL=http://localhost:3011
 
 # HTTPS backend (recommended when your frontend is over HTTPS)
 REACT_APP_API_BASE_URL=https://localhost:3011

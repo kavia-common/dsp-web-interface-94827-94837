@@ -14,7 +14,8 @@ if (!resolvedBaseURL && typeof window !== 'undefined' && window?.location) {
   const defaultProtocol = isPageHttps ? 'https:' : 'http:';
   const defaultHost = 'localhost';
   // Use 3443 for HTTPS backend, 3010 for HTTP backend by convention in this project.
-  const defaultPort = isPageHttps ? 3443 : 3010;
+  // Use 3443 for HTTPS backend, 3011 for HTTP backend per current local smoke test config.
+  const defaultPort = isPageHttps ? 3443 : 3011;
   resolvedBaseURL = `${defaultProtocol}//${defaultHost}:${defaultPort}`;
 }
 
