@@ -19,7 +19,7 @@ Expect 200 JSON: {"success":true,"message":"OK"}
   -H "Origin: https://localhost:3000" \
   -H "Access-Control-Request-Method: POST" \
   -H "Access-Control-Request-Headers: content-type"
-Expect 204 with Access-Control-Allow-Origin and -Headers.
+Expect 204 with Access-Control-Allow-Origin and -Headers. If the origin is not in CORS_ALLOWED_ORIGINS, expect 403 with JSON error.
 
 4) Signup
 - curl -i -k -X POST https://localhost:3011/auth/signup \

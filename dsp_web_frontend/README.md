@@ -32,13 +32,16 @@ It correctly bundles React in production mode and optimizes the build for the be
 Set `REACT_APP_API_BASE_URL` in a `.env` file (see `.env.example`) to point to your backend.
 Examples:
 ```
-# HTTP backend (default port 3010)
+# HTTP backend (default port 3010) - only if your frontend is also served over HTTP
 REACT_APP_API_BASE_URL=http://localhost:3010
 
-# HTTPS backend (e.g., when HTTPS_ENABLE=true and PORT=3011)
+# HTTPS backend (recommended when your frontend is over HTTPS)
 REACT_APP_API_BASE_URL=https://localhost:3011
 ```
 If you use a self-signed certificate (mkcert), ensure it's trusted by your OS/browser (`mkcert -install`) to avoid axios/network trust errors.
+
+When using HTTPS, the backend must allow your HTTPS frontend origins via `CORS_ALLOWED_ORIGINS`, e.g.:
+`CORS_ALLOWED_ORIGINS=https://localhost:3000,https://127.0.0.1:3000`
 
 Troubleshooting:
 - If your frontend is served via https (e.g., tunnels/proxies), ensure the backend is reachable and CORS allows that origin. Mixed content (https page calling http backend) can be blocked; our client defaults to `http://localhost:3010`. Override with `REACT_APP_API_BASE_URL` if needed.
